@@ -972,6 +972,7 @@ def _cut_retakes(state, note) -> int:
                 note(f"  line {keep} continues the take at line {block_start} — nothing left to cut.")
                 continue
         keep_idx.update(range(block_start, keep + 1))
+        keep_text = segs[keep - 1].get("text", "")
         # SPAN-FILL: a retake block runs from the first abandoned attempt to the line before the
         # good take, so remove that whole span rather than only the lines the detector listed.
         #

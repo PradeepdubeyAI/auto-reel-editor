@@ -18,13 +18,21 @@ dist/
 *.db-shm
 *.db-wal
 
-# generated media / runtime output
-videos/
+# generated media / runtime output -- but NOT the bundled music/SFX asset library,
+# which is real source content this app ships with (see videos/*_assets/NOTICE.md)
+videos/*
+!videos/music_assets/
+!videos/sfx_assets/
 uploads/
 *.mp4
 *.mov
 *.wav
+
+# mp3 is blocked by default (runtime output, e.g. recaptioned exports) but the
+# bundled asset library needs the actual audio files tracked
 *.mp3
+!videos/music_assets/*.mp3
+!videos/sfx_assets/*.mp3
 
 # os
 .DS_Store

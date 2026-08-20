@@ -1,0 +1,323 @@
+{
+  "info": {
+    "name": "Reel Studio Backend",
+    "description": "Matches docs/POSTMAN.md. Import the sibling reel-local.postman_environment.json too and select it (top-right environment dropdown) before running anything. Folder B is designed to be run top-to-bottom (Runner or one-by-one) — each request's post-response script fills in the variable the next request needs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "A. Sanity",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+          }
+        },
+        {
+          "name": "Caption styles",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/caption-styles", "host": ["{{baseUrl}}"], "path": ["api", "caption-styles"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "B. Real-mode flow (run in order)",
+      "item": [
+        {
+          "name": "B1. Upload video",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/upload?name=test.mp4&clean_audio=true&remove_silences=true&color_grade=true",
+              "host": ["{{baseUrl}}"], "path": ["api", "upload"],
+              "query": [
+                { "key": "name", "value": "test.mp4" },
+                { "key": "clean_audio", "value": "true" },
+                { "key": "remove_silences", "value": "true" },
+                { "key": "color_grade", "value": "true" }
+              ]
+            },
+            "body": { "mode": "file", "file": { "src": "" } },
+            "description": "Body -> binary in Postman's UI: click 'Select File' and pick a short local .mp4 after import (Postman can't pre-fill a local file path from a shared collection)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "pm.environment.set('projectId', d.project_id);",
+                  "pm.environment.set('jobId', d.job_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B2. Watch progress (SSE)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/progress/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "progress", "{{jobId}}"] },
+            "description": "This is a Server-Sent-Events stream. Recent Postman versions show live messages; wait for \"event\":\"done\". If yours doesn't stream, use: curl -N {{baseUrl}}/api/progress/<jobId>. Re-run this after B8 too (with the new jobId it sets)."
+          }
+        },
+        {
+          "name": "B3. Project words",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/project?project={{projectId}}",
+              "host": ["{{baseUrl}}"], "path": ["api", "project"],
+              "query": [{ "key": "project", "value": "{{projectId}}" }]
+            },
+            "description": "Quick mode: delete the ?project=... query param entirely to get the built-in sample's words instead."
+          }
+        },
+        {
+          "name": "B4. Plan B-roll",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/broll/plan", "host": ["{{baseUrl}}"], "path": ["api", "broll", "plan"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{projectId}}\",\n  \"edits\": { \"editedText\": {} }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Quick mode: set \"project\": \"\" — falls back to the sample project."
+          }
+        },
+        {
+          "name": "B5. Plan zooms",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/zoom/plan", "host": ["{{baseUrl}}"], "path": ["api", "zoom", "plan"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{projectId}}\",\n  \"edits\": { \"editedText\": {} }\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "B6. Find stock clips",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/broll/fetch", "host": ["{{baseUrl}}"], "path": ["api", "broll", "fetch"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"city skyline at night\",\n  \"spanMs\": 4000,\n  \"orientation\": \"portrait\",\n  \"page\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.candidates && d.candidates.length) {",
+                  "  pm.environment.set('mediaUrl', d.candidates[0].mediaUrl);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B7. Cache the clip",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/broll/cache", "host": ["{{baseUrl}}"], "path": ["api", "broll", "cache"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"{{mediaUrl}}\",\n  \"kind\": \"video\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "B8. Render the reel",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/broll/render", "host": ["{{baseUrl}}"], "path": ["api", "broll", "render"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{projectId}}\",\n  \"accepted\": [],\n  \"zooms\": [],\n  \"captionSettings\": { \"styleId\": \"amber\", \"bottomPercent\": 22 },\n  \"edits\": { \"editedText\": {} },\n  \"captionsOff\": false,\n  \"engine\": \"ffmpeg\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "This example is captions-only (accepted/zooms empty) — the simplest smoke test. Add items from B6/B7 into \"accepted\" to bake real B-roll in."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "pm.environment.set('outputName', d.output_name);",
+                  "pm.environment.set('jobId', d.job_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B9. Download the reel",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/result/{{outputName}}", "host": ["{{baseUrl}}"], "path": ["api", "result", "{{outputName}}"] },
+            "description": "Click 'Send and Download' to save the mp4 rather than viewing raw bytes."
+          }
+        },
+        {
+          "name": "B10. Reel details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/output-meta/{{outputName}}", "host": ["{{baseUrl}}"], "path": ["api", "output-meta", "{{outputName}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "C. Utility / other (any order)",
+      "item": [
+        {
+          "name": "Base video",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/video?project={{projectId}}",
+              "host": ["{{baseUrl}}"], "path": ["api", "video"],
+              "query": [{ "key": "project", "value": "{{projectId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Raw transcript",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/transcript?project={{projectId}}",
+              "host": ["{{baseUrl}}"], "path": ["api", "transcript"],
+              "query": [{ "key": "project", "value": "{{projectId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Library (list reels)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/library", "host": ["{{baseUrl}}"], "path": ["api", "library"] }
+          }
+        },
+        {
+          "name": "Delete a reel",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/library/{{outputName}}", "host": ["{{baseUrl}}"], "path": ["api", "library", "{{outputName}}"] }
+          }
+        },
+        {
+          "name": "Cached media",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/broll/media/<key>", "host": ["{{baseUrl}}"], "path": ["api", "broll", "media", "<key>"] },
+            "description": "Replace <key> with a key from a B7 cache response."
+          }
+        },
+        {
+          "name": "Upload own B-roll",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/broll/upload?name=clip.mp4&kind=video",
+              "host": ["{{baseUrl}}"], "path": ["api", "broll", "upload"],
+              "query": [{ "key": "name", "value": "clip.mp4" }, { "key": "kind", "value": "video" }]
+            },
+            "body": { "mode": "file", "file": { "src": "" } },
+            "description": "Body -> binary: pick a local clip after import."
+          }
+        },
+        {
+          "name": "Settings: keys present",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/settings/keys", "host": ["{{baseUrl}}"], "path": ["api", "settings", "keys"] }
+          }
+        },
+        {
+          "name": "Settings: defaults (get)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/settings/defaults", "host": ["{{baseUrl}}"], "path": ["api", "settings", "defaults"] }
+          }
+        },
+        {
+          "name": "Settings: defaults (save)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/settings/defaults", "host": ["{{baseUrl}}"], "path": ["api", "settings", "defaults"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bottomPercent\": 20\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Settings: output dir",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/settings/output-dir", "host": ["{{baseUrl}}"], "path": ["api", "settings", "output-dir"] }
+          }
+        },
+        {
+          "name": "Publish kit (title/tags)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/publish-kit", "host": ["{{baseUrl}}"], "path": ["api", "publish-kit"] },
+            "description": "No body. Operates on the ACTIVE project's transcript."
+          }
+        },
+        {
+          "name": "Recaption (desktop)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/recaption", "host": ["{{baseUrl}}"], "path": ["api", "recaption"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{projectId}}\",\n  \"captionSettings\": { \"bottomPercent\": 22 },\n  \"edits\": { \"editedText\": {} }\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Regenerate (desktop)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/regenerate", "host": ["{{baseUrl}}"], "path": ["api", "regenerate"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": \"{{projectId}}\",\n  \"recipe\": { \"cleanAudio\": true, \"removeSilences\": true, \"colorGrade\": true }\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

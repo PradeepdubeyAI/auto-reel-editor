@@ -1,0 +1,12 @@
+{
+  "captionEngine": "remotion",
+  "captionStyle": "word-focus",
+  "bottomPercent": 28,
+  "recipe": {
+    "cleanAudio": true,
+    "trimHook": true,
+    "removeSilences": true,
+    "colorGrade": true
+  },
+  "lufsDisplay": -14
+}

@@ -1,0 +1,14 @@
+# --- backend API server ---
+fastapi
+uvicorn[standard]
+python-dotenv
+requests
+Pillow
+numpy
+
+# --- pipeline (transcription, cuts, color grade, export) ---
+moviepy
+ffmpeg-python
+
+# pycaps (word-by-word captions) needs its OWN isolated venv -- it drives a headless
+# browser renderer that conflicts with the packages above. See docs/PYCAPS_SETUP.md.

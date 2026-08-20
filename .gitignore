@@ -1,0 +1,30 @@
+# secrets
+.env
+.env.local
+
+# python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# node
+node_modules/
+dist/
+*.log
+
+# sqlite (runtime data, not source)
+*.db
+*.db-shm
+*.db-wal
+
+# generated media / runtime output
+videos/
+uploads/
+*.mp4
+*.mov
+*.wav
+*.mp3
+
+# os
+.DS_Store

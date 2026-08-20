@@ -1,4 +1,4 @@
-"""Reel Studio UI backend.
+"""Reel Editor backend.
 
 Serves the ACTIVE project (a fixture by default; an uploaded+ingested clip after upload):
   - GET  /api/project       -> {name, videoUrl, fps, width, height, durationMs, words[]}
@@ -182,7 +182,7 @@ def _resolve(project_id: "str | None") -> "tuple[dict, int]":
         return p, int(p.get("version", 1))
     return ACTIVE, ACTIVE_VERSION
 
-app = FastAPI(title="Reel Studio UI backend")
+app = FastAPI(title="Reel Editor backend")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

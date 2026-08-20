@@ -1,4 +1,4 @@
-# Reel Studio (superUP) — Feature Roadmap Research
+# Reel Editor — Feature Roadmap Research
 
 Research date: 2026-07-21. Grounded in a full read of the actual `reel-studio-ui` codebase (not assumptions), plus competitive research across CapCut, InShot, VN, Canva, Adobe Premiere Rush/Firefly, Descript, VEED, Opus.pro, Instagram, TikTok, VSCO, and others.
 

@@ -82,8 +82,6 @@ import {
   type Zoom,
 } from "./api";
 import { POPPINS_DATA_URL } from "./poppinsData";
-import logoSuper from "./assets/logo-super-ink.svg";
-import logoUp from "./assets/logo-up-red.svg";
 
 // Bundle the SAME Poppins ExtraBold the render uses, so the caption preview matches the output.
 // Also register the keyframes the animated previews use (fade / karaoke fill / typewriter / glow).
@@ -198,9 +196,8 @@ const fmtMsPrecise = (ms: number): string => {
 // ------------------------------------------------------------------ small UI bits ----------
 function Wordmark() {
   return (
-    <div className="su-wordmark" aria-label="superUP">
-      <img src={logoSuper} alt="" />
-      <img src={logoUp} alt="" />
+    <div className="su-wordmark text" aria-label="Reel Editor">
+      Reel <b>Editor</b>
     </div>
   );
 }
@@ -3453,7 +3450,7 @@ function SavedScreen({ outputName, projectId, onCreateAnother }: { outputName: s
         <div className="su-center-block" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 6 }}>
           <div className="su-checkbig"><div className="in"><Check size={30} strokeWidth={3} /></div></div>
           <h1 className="su-h1" style={{ marginTop: 14 }}>Saved to your library</h1>
-          <p className="su-sub" style={{ maxWidth: 300 }}>Your reel is in your camera roll and your superUP library. Go get those clicks.</p>
+          <p className="su-sub" style={{ maxWidth: 300 }}>Your reel is in your camera roll and your Reel Editor library. Go get those clicks.</p>
 
           <div className="su-card su-stack" style={{ marginTop: 16, width: "100%", textAlign: "left", gap: 8 }}>
             <div className="su-label">Caption &amp; hashtags</div>

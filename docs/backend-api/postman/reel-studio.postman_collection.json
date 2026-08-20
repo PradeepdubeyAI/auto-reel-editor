@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Reel Studio Backend",
+    "name": "Reel Editor Backend",
     "description": "Matches docs/POSTMAN.md. Import the sibling reel-local.postman_environment.json too and select it (top-right environment dropdown) before running anything. Folder B is designed to be run top-to-bottom (Runner or one-by-one) — each request's post-response script fills in the variable the next request needs.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

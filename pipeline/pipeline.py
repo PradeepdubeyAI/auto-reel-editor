@@ -1,4 +1,4 @@
-"""Reel Studio — one function that runs the whole Vex + pycaps flow with
+"""Reel Editor — one function that runs the whole Vex + pycaps flow with
 selectable steps. Powers the web UI (app.py) and is callable directly.
 
 Steps (each optional, chosen by the caller):

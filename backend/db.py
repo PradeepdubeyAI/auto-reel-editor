@@ -1,4 +1,4 @@
-"""Reel Studio UI — minimal persistence layer.
+"""Reel Editor — minimal persistence layer.
 
 The rest of this backend deliberately has NO database: all job/project state lives in
 in-memory dicts in `server.py` by design (single uvicorn worker, see its module docstring),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs the Reel Studio pipeline as a SUBPROCESS — executed with the VEX venv Python
+"""Runs the Reel Editor pipeline as a SUBPROCESS — executed with the VEX venv Python
 (the only interpreter that can import the pipeline). The UI backend spawns this and
 relays its stdout (one NDJSON object per line) to the browser over WebSocket.
 

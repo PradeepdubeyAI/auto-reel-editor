@@ -52,7 +52,7 @@ video-edit-mobile/
 │   │   ├── mobile/                     # ← the mobile app (what users run)
 │   │   │   ├── MobileApp.tsx           #   the whole flow: state machine + screens
 │   │   │   ├── api.ts                  #   backend client (fetch + SSE)
-│   │   │   ├── theme.css               #   superUP brand tokens + components
+│   │   │   ├── theme.css               #   Reel Editor brand tokens + components
 │   │   │   ├── main.tsx                #   mobile entry (mounts #mobile-root)
 │   │   │   └── assets/                 #   logo SVGs
 │   │   ├── App.tsx + components/       #   the desktop editor (separate consumer)

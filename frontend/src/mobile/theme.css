@@ -1,6 +1,6 @@
-/* superUP mobile theme — warm editorial brand.
+/* Reel Editor mobile theme — warm editorial brand.
    Cream canvas · brown ink · red primary CTAs · yellow "go" CTAs · lifted-paper shadows.
-   Tokens mirror the superUP design system (colors_and_type.css). Self-contained (no Tailwind). */
+   Tokens mirror the original design system this app was skinned to (colors_and_type.css). Self-contained (no Tailwind). */
 
 @import url("https://api.fontshare.com/v2/css?f[]=eudoxus-sans@400,500,700,800&f[]=satoshi@400,500,700,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
